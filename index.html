@@ -4,31 +4,67 @@
   <title>My First Website</title>
   <style>
     body {
-      background:black;
-      color:red;
+      background: black;
+      color: red;
       font-family: Arial;
       text-align: center;
       padding-top: 100px;
     }
     button {
       padding: 50px 100px;
-      background:red;
-      color:black;
-      font family:Helvetica;
+      background: red;
+      color: black;
+      font-family: Helvetica;
       font-size: 30px;
       cursor: pointer;
+    }
+    video {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+ object-fit: fill;
+  background: black;
     }
   </style>
 </head>
 <body>
 
-  <h1 style="font-size:100px"><strong>Vishnu Nair🌍</strong></h1>
-  <h2>about me🌍</h2>
-  <h3>wow</h3>
-  <span style="color:green;">mauwiewauwie</span>
-  <p>
-  <p1>This site is in development</p>
-  <button onclick="alert('gay ass')">do not click</button>
+  <h1 style="font-size:100px"><strong>Vishnu Nair </strong></h1>
+  <button onclick="aboutMe()">about me</button>
+
+  <p>This site is in development</p>
+  <br><br>
+
+  <button onclick="playVideo()">Do Not Click </button>
+
+<video id="myVideo">
+  <source src="video.mp4" type="video/mp4">
+</video>
+
+<script>
+function playVideo() {
+  const video = document.getElementById("myVideo");
+
+  video.style.display = "block";
+  video.play();
+
+  if (video.requestFullscreen) {
+    video.requestFullscreen();
+  } else if (video.webkitRequestFullscreen) {
+    video.webkitRequestFullscreen();
+  } else if (video.msRequestFullscreen) {
+    video.msRequestFullscreen();
+  }
+video.onended = () => {
+  document.exitFullscreen();
+  video.style.display = "none";
+};
+}
+</script>
 
 </body>
 </html>
