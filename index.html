@@ -1,119 +1,182 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My First Website</title>
+  <title>Vishnu Nair</title>
+
   <style>
     body {
-      background:#3E2723;
+      background: #3E2723;
       color: white;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       text-align: center;
       padding-top: 100px;
+      overflow: hidden;
     }
+
     button {
-      padding: 50px 100px;
+      padding: 30px 60px;
       background: #FFFFE0;
       color: black;
-      font-family: Helvetica;
-      font-size: 30px;
+      font-size: 28px;
       cursor: pointer;
+      border: none;
     }
-  .funnyImg {
-  position: fixed;
-  top: 50%;
 
-  width: 25vw;
-  max-width: 400px;
+    .funnyImg {
+      position: fixed;
+      width: 25vw;
+      max-width: 350px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0) rotate(0deg);
+      transition: transform 2s ease-in-out;
+      z-index: 9999;
+      pointer-events: none;
+    }
 
-  transform: translate(-50%, -50%) scale(0) rotate(0deg);
-  transition: transform 0.8s ease-in-out;
-
-  z-index: 9999;
-}
-
-  video {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vw;
-  height: 100vh;
- object-fit: fill;
-  background: black;
+    video {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: fill;
+      background: black;
+      z-index: 10000;
     }
   </style>
 </head>
-<script>
-function showImage() {
-  const left   = document.getElementById("imgLeft");
-  const center = document.getElementById("imgCenter");
-  const right  = document.getElementById("imgRight");
 
-  // Reset instantly (important for infinite clicks)
-  [left, center, right].forEach(img => {
-    img.style.transition = "none";
-    img.style.transform = "translate(-50%, -50%) scale(0) rotate(0deg)";
-  });
-
-  // Set positions
-  left.style.left   = "30%";
-  center.style.left = "50%";
-  right.style.left  = "70%";
-
-  // Force browser reflow
-  void left.offsetWidth;
-
-  // Animate
-  [left, center, right].forEach(img => {
-    img.style.transition = "transform 0.8s ease-in-out";
-    img.style.transform =
-      "translate(-50%, -50%) scale(1.2) rotate(360deg)";
-  });
-
-  // Hide after animation
-  setTimeout(() => {
-    [left, center, right].forEach(img => {
-      img.style.transform =
-        "translate(-50%, -50%) scale(0) rotate(0deg)";
-    });
-  }, 1500);
-}
-</script>
 <body>
 
-  <h1 style="font-size:100px"><strong>Vishnu Nair </strong></h1>
-  <button onclick="showImage()">About Me</button>
-  <img class="funnyImg" id="imgLeft"   src="image1.jpg">
-<img class="funnyImg" id="imgCenter" src="image2.jpg">
-<img class="funnyImg" id="imgRight"  src="image3.jpg">
-  <p>This site is in development</p>
-  <br><br>
+<h1 style="font-size:100px;">Vishnu Nair</h1>
 
-  <button onclick="playVideo()">Do Not Click </button>
+<button onclick="showImages()">About Me</button>
+
+<p>This site is in development</p>
+
+<br><br>
+
+<button onclick="playVideo()">Do Not Click</button>
+
+<audio id="funnySound" src="sound.mp3"></audio>
+
+<img id="imgLeft"   class="funnyImg" src="image1.jpg">
+<img id="imgCenter" class="funnyImg" src="image2.jpg">
+<img id="imgRight"  class="funnyImg" src="image3.jpg">
 
 <video id="myVideo">
   <source src="video.mp4" type="video/mp4">
 </video>
 
 <script>
-function playVideo() {
-  const video = document.getElementById("myVideo");
+let bouncing = false;
+let animationId;
 
-  video.style.display = "block";
-  video.play();
+function showImages() {
+  const imgs = [imgLeft, imgCenter, imgRight];
 
-  if (video.requestFullscreen) {
-    video.requestFullscreen();
-  } else if (video.webkitRequestFullscreen) {
-    video.webkitRequestFullscreen();
-  } else if (video.msRequestFullscreen) {
-    video.msRequestFullscreen();
+  funnySound.currentTime = 0;
+  funnySound.play();
+
+  // ===== RESET =====
+  imgs.forEach((img, i) => {
+    img.style.transition = "none";
+    img.style.left = `${30 + i * 20}%`;
+    img.style.top = "50%";
+    img.style.transform = "translate(-50%, -50%) scale(0) rotate(0deg)";
+  });
+
+  void imgs[0].offsetWidth;
+
+  // ===== ROTATE IN (2s) =====
+  imgs.forEach(img => {
+    img.style.transition = "transform 2s ease-in-out";
+    img.style.transform =
+      "translate(-50%, -50%) scale(1.2) rotate(360deg)";
+  });
+
+  // ===== BOUNCE (2s) =====
+  setTimeout(() => startBounce(imgs), 2000);
+
+  // ===== ROTATE OUT (2s) =====
+  setTimeout(() => {
+    stopBounce();
+
+    imgs.forEach((img, i) => {
+      img.style.transition = "none";
+      img.style.left = `${30 + i * 20}%`;
+      img.style.top = "50%";
+      img.style.transform =
+        "translate(-50%, -50%) scale(1.2) rotate(360deg)";
+    });
+
+    void imgs[0].offsetWidth;
+
+    imgs.forEach(img => {
+      img.style.transition = "transform 2s ease-in-out";
+      img.style.transform =
+        "translate(-50%, -50%) scale(0) rotate(-360deg)";
+    });
+  }, 4000);
+}
+
+function startBounce(imgs) {
+  bouncing = true;
+
+  imgs.forEach(img => {
+    const rect = img.getBoundingClientRect();
+
+    // Switch to pure pixel positioning
+    img.style.transition = "none";
+    img.style.transform = "scale(1.2) rotate(360deg)";
+    img.style.left = rect.left + "px";
+    img.style.top  = rect.top  + "px";
+
+    img.vx = (Math.random() * 6 + 3) * (Math.random() < 0.5 ? -1 : 1);
+    img.vy = (Math.random() * 6 + 3) * (Math.random() < 0.5 ? -1 : 1);
+  });
+
+  function move() {
+    if (!bouncing) return;
+
+    imgs.forEach(img => {
+      let x = img.offsetLeft + img.vx;
+      let y = img.offsetTop  + img.vy;
+
+      const maxX = window.innerWidth  - img.offsetWidth;
+      const maxY = window.innerHeight - img.offsetHeight;
+
+      if (x <= 0) { x = 0; img.vx *= -1; }
+      if (x >= maxX) { x = maxX; img.vx *= -1; }
+
+      if (y <= 0) { y = 0; img.vy *= -1; }
+      if (y >= maxY) { y = maxY; img.vy *= -1; }
+
+      img.style.left = x + "px";
+      img.style.top  = y + "px";
+    });
+
+    animationId = requestAnimationFrame(move);
   }
-video.onended = () => {
-  document.exitFullscreen();
-  video.style.display = "none";
-};
+
+  move();
+}
+
+function stopBounce() {
+  bouncing = false;
+  cancelAnimationFrame(animationId);
+}
+
+function playVideo() {
+  myVideo.style.display = "block";
+  myVideo.play();
+  myVideo.requestFullscreen?.();
+
+  myVideo.onended = () => {
+    document.exitFullscreen?.();
+    myVideo.style.display = "none";
+  };
 }
 </script>
 
