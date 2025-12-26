@@ -4,21 +4,34 @@
   <title>My First Website</title>
   <style>
     body {
-      background: black;
-      color: red;
+      background:#3E2723;
+      color: white;
       font-family: Arial;
       text-align: center;
       padding-top: 100px;
     }
     button {
       padding: 50px 100px;
-      background: red;
+      background: #FFFFE0;
       color: black;
       font-family: Helvetica;
       font-size: 30px;
       cursor: pointer;
     }
-    video {
+  .funnyImg {
+  position: fixed;
+  top: 50%;
+
+  width: 25vw;
+  max-width: 400px;
+
+  transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  transition: transform 0.8s ease-in-out;
+
+  z-index: 9999;
+}
+
+  video {
   display: none;
   position: fixed;
   top: 50%;
@@ -31,11 +44,49 @@
     }
   </style>
 </head>
+<script>
+function showImage() {
+  const left   = document.getElementById("imgLeft");
+  const center = document.getElementById("imgCenter");
+  const right  = document.getElementById("imgRight");
+
+  // Reset instantly (important for infinite clicks)
+  [left, center, right].forEach(img => {
+    img.style.transition = "none";
+    img.style.transform = "translate(-50%, -50%) scale(0) rotate(0deg)";
+  });
+
+  // Set positions
+  left.style.left   = "30%";
+  center.style.left = "50%";
+  right.style.left  = "70%";
+
+  // Force browser reflow
+  void left.offsetWidth;
+
+  // Animate
+  [left, center, right].forEach(img => {
+    img.style.transition = "transform 0.8s ease-in-out";
+    img.style.transform =
+      "translate(-50%, -50%) scale(1.2) rotate(360deg)";
+  });
+
+  // Hide after animation
+  setTimeout(() => {
+    [left, center, right].forEach(img => {
+      img.style.transform =
+        "translate(-50%, -50%) scale(0) rotate(0deg)";
+    });
+  }, 1500);
+}
+</script>
 <body>
 
   <h1 style="font-size:100px"><strong>Vishnu Nair </strong></h1>
-  <button onclick="aboutMe()">about me</button>
-
+  <button onclick="showImage()">About Me</button>
+  <img class="funnyImg" id="imgLeft"   src="image1.jpg">
+<img class="funnyImg" id="imgCenter" src="image2.jpg">
+<img class="funnyImg" id="imgRight"  src="image3.jpg">
   <p>This site is in development</p>
   <br><br>
 
